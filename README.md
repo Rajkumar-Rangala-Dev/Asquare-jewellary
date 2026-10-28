@@ -8,6 +8,19 @@ There is no build step. Serve `site/` from any static host:
 cd site && python3 -m http.server 8000   # open http://localhost:8000
 ```
 
+**Live:** https://rajkumar-rangala-dev.github.io/Asquare-jewellary/
+
+## Deploying (GitHub Pages)
+
+Pages serves the `gh-pages` branch, which contains only the contents of `site/`. After committing changes to `main`, publish them with:
+
+```bash
+git branch -f gh-pages "$(git commit-tree "$(git rev-parse HEAD:site)" -p gh-pages -m "Deploy $(git rev-parse --short HEAD)")"
+git push origin gh-pages
+```
+
+GitHub rebuilds the site within a minute or two.
+
 ## Structure
 
 ```
