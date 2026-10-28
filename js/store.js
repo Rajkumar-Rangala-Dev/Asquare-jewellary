@@ -5,121 +5,139 @@
 (function () {
   "use strict";
 
-  const GST_RATE = 0.03; // GST on jewellery in India
+  const GST_RATE = 0.03; // GST on imitation jewellery (HSN 7117) in India
+  const FREE_SHIPPING_FROM = 999;
+  const SHIPPING_FEE = 79;
 
-  // Price breakup in INR (before GST). Totals are derived, so they always add up.
+  // Prices are what the customer pays (GST included). `mrp` drives the strike-through.
+  // Every listing states finish, base metal and stones: these pieces are plated or
+  // rolled gold, never solid gold, and the copy must never imply otherwise.
   const PRODUCTS = [
-    {
-      id: "aria-studs",
-      name: "Aria Halo Diamond Studs",
-      tags: ["diamond"],
-      type: "Earrings",
-      badge: "Bestseller",
-      img: "assets/img/p-studs.webp",
-      alt: "Pair of round halo diamond stud earrings in white gold",
-      metal: "18KT White Gold",
-      weight: "3.12 g",
-      stones: "0.62 ct diamonds · EF colour · VVS–VS clarity",
-      breakup: { metal: 21400, making: 6800, stones: 55600 },
-    },
-    {
-      id: "noor-pendant",
-      name: "Noor Cushion Halo Pendant",
-      tags: ["diamond"],
-      type: "Pendant",
-      img: "assets/img/p-pendant.webp",
-      alt: "Cushion-shaped diamond halo pendant on a fine white gold chain",
-      metal: "18KT White Gold",
-      weight: "4.05 g",
-      stones: "0.84 ct diamonds · FG colour · VS clarity",
-      breakup: { metal: 27800, making: 8900, stones: 72400 },
-    },
     {
       id: "vasundhara-necklace",
       name: "Vasundhara Temple Necklace Set",
-      tags: ["gold", "bridal"],
+      tags: ["onegram", "bridal"],
       type: "Necklace Set",
-      badge: "Heritage",
+      badge: "Bestseller",
       img: "assets/img/p-temple.webp",
-      alt: "22 karat temple gold necklace with ruby-red kemp stones and matching earrings",
-      metal: "22KT Yellow Gold",
-      weight: "48.60 g",
-      stones: "Ruby-red kemp stones · matching drop earrings",
-      breakup: { metal: 312000, making: 38500, stones: 6200 },
+      alt: "Temple-style gold-finish necklace with ruby-red kemp stones and matching earrings",
+      finish: "1 Gram Gold Plated",
+      base: "Brass",
+      stones: "Ruby-red kemp stones",
+      includes: "Necklace and matching drop earrings",
+      price: 3499,
+      mrp: 5499,
+    },
+    {
+      id: "aria-studs",
+      name: "Aria AD Halo Studs",
+      tags: ["ad"],
+      type: "Earrings",
+      img: "assets/img/p-studs.webp",
+      alt: "Pair of round halo stud earrings set with sparkling white AD stones",
+      finish: "Rhodium Polish (silver tone)",
+      base: "Brass",
+      stones: "American diamond (cubic zirconia)",
+      includes: "Pair of push-back studs",
+      price: 649,
+      mrp: 999,
     },
     {
       id: "eternal-bands",
-      name: "Eternal Twin Wedding Bands",
-      tags: ["gold", "bridal"],
+      name: "Eternal Couple Rings",
+      tags: ["rolled", "bridal"],
       type: "Couple Rings (Pair)",
       img: "assets/img/p-bands.webp",
-      alt: "Pair of polished yellow gold wedding bands",
-      metal: "22KT Yellow Gold",
-      weight: "9.80 g (pair)",
-      stones: "Comfort-fit, high polish",
+      alt: "Pair of polished gold-finish couple bands",
+      finish: "Rolled Gold",
+      base: "Copper alloy",
+      stones: "Plain high-polish band",
+      includes: "Two rings, sized individually",
       sizes: ["10", "12", "14", "16", "18", "20", "22"],
-      breakup: { metal: 62900, making: 5800, stones: 0 },
+      price: 799,
+      mrp: 1199,
     },
     {
-      id: "rani-ring",
-      name: "Rani Pink Sapphire Halo Ring",
-      tags: ["diamond"],
-      type: "Ring",
+      id: "noor-pendant",
+      name: "Noor AD Cushion Pendant",
+      tags: ["ad"],
+      type: "Pendant with Chain",
       badge: "New",
-      img: "assets/img/p-sapphire.webp",
-      alt: "Rose gold ring with an emerald-cut pink sapphire framed by diamonds",
-      metal: "18KT Rose Gold",
-      weight: "3.60 g",
-      stones: "1.10 ct pink sapphire · 0.28 ct diamonds",
-      sizes: ["8", "10", "12", "14", "16"],
-      breakup: { metal: 24700, making: 7200, stones: 41000 },
+      img: "assets/img/p-pendant.webp",
+      alt: "Cushion-shaped halo pendant with white AD stones on a fine silver-tone chain",
+      finish: "Rhodium Polish (silver tone)",
+      base: "Brass",
+      stones: "American diamond (cubic zirconia)",
+      includes: "Pendant with 18-inch chain",
+      price: 899,
+      mrp: 1399,
     },
     {
       id: "kanak-bracelet",
-      name: "Kanak Interlink Bracelet",
-      tags: ["gold"],
+      name: "Kanak Rolled Gold Link Bracelet",
+      tags: ["rolled"],
       type: "Bracelet",
       img: "assets/img/p-bracelet.webp",
-      alt: "Chunky interlinked yellow gold chain bracelet",
-      metal: "22KT Yellow Gold",
-      weight: "15.20 g",
-      stones: "Hand-linked, box clasp",
-      breakup: { metal: 97600, making: 9100, stones: 0 },
+      alt: "Chunky interlinked gold-finish chain bracelet",
+      finish: "Rolled Gold",
+      base: "Copper alloy",
+      stones: "Hand-linked, lobster clasp",
+      includes: "Bracelet, 7.5 inch with extender",
+      price: 699,
+      mrp: 1099,
     },
     {
       id: "celeste-tennis",
-      name: "Celeste Diamond Tennis Bracelet",
-      tags: ["diamond", "bridal"],
+      name: "Celeste AD Tennis Bracelet",
+      tags: ["ad", "bridal"],
       type: "Bracelet",
       badge: "Bestseller",
       img: "assets/img/p-tennis.webp",
-      alt: "Line bracelet of round brilliant diamonds in white gold",
-      metal: "18KT White Gold",
-      weight: "9.40 g",
-      stones: "3.20 ct diamonds · GH colour · VS clarity",
-      breakup: { metal: 64500, making: 15800, stones: 158000 },
+      alt: "Line bracelet of sparkling white AD stones in a silver-tone setting",
+      finish: "Rhodium Polish (silver tone)",
+      base: "Brass",
+      stones: "American diamond (cubic zirconia)",
+      includes: "Bracelet with box clasp",
+      price: 1299,
+      mrp: 1999,
+    },
+    {
+      id: "rani-ring",
+      name: "Rani Pink Stone Halo Ring",
+      tags: ["ad"],
+      type: "Ring",
+      img: "assets/img/p-sapphire.webp",
+      alt: "Rose gold-finish ring with a pink stone framed by white AD stones",
+      finish: "Rose Gold Plated",
+      base: "Brass",
+      stones: "Pink CZ centre stone with AD halo",
+      includes: "Adjustable band, fits sizes 8–16",
+      price: 549,
+      mrp: 899,
     },
     {
       id: "sitara-stack",
       name: "Sitara Stacking Rings, Set of 3",
-      tags: ["diamond", "gold"],
+      tags: ["onegram", "ad"],
       type: "Ring Set",
       img: "assets/img/p-stack.webp",
-      alt: "Three stacked yellow gold rings set with pavé diamonds",
-      metal: "18KT Yellow Gold",
-      weight: "6.30 g",
-      stones: "0.45 ct pavé diamonds",
+      alt: "Three stacked gold-finish rings set with pavé AD stones",
+      finish: "1 Gram Gold Plated",
+      base: "Brass",
+      stones: "Pavé American diamond (cubic zirconia)",
+      includes: "Three rings in one size",
       sizes: ["8", "10", "12", "14", "16"],
-      breakup: { metal: 43200, making: 9600, stones: 18900 },
+      price: 899,
+      mrp: 1399,
     },
   ];
 
   PRODUCTS.forEach((p) => {
-    const b = p.breakup;
-    p.subtotal = b.metal + b.making + b.stones;
-    p.gst = Math.round(p.subtotal * GST_RATE);
-    p.price = p.subtotal + p.gst;
+    p.gst = Math.round(p.price - p.price / (1 + GST_RATE));
+    p.off = p.mrp > p.price ? Math.round((1 - p.price / p.mrp) * 100) : 0;
   });
+
+  const shippingFor = (total) => (total === 0 || total >= FREE_SHIPPING_FROM ? 0 : SHIPPING_FEE);
 
   const inr = new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 });
   const formatINR = (n) => inr.format(n);
@@ -149,6 +167,7 @@
   const Store = {
     PRODUCTS,
     GST_RATE,
+    FREE_SHIPPING_FROM,
     formatINR,
     byId,
     onChange(fn) { listeners.add(fn); return () => listeners.delete(fn); },
@@ -159,7 +178,8 @@
       const lines = Store.bag();
       const total = lines.reduce((s, l) => s + l.product.price * l.qty, 0);
       const gst = lines.reduce((s, l) => s + l.product.gst * l.qty, 0);
-      return { total, gst, subtotal: total - gst };
+      const shipping = shippingFor(total);
+      return { total, gst, shipping, toFree: total > 0 && !shipping ? 0 : Math.max(0, FREE_SHIPPING_FROM - total) };
     },
     addToBag(id, size = null, qty = 1) {
       const p = byId(id);

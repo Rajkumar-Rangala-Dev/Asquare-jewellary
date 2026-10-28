@@ -256,6 +256,10 @@
   const heartBtn = (p, cls = "wish-btn") =>
     `<button class="${cls}" data-wish="${p.id}" aria-pressed="${Store.isWished(p.id)}" aria-label="${Store.isWished(p.id) ? "Remove from" : "Add to"} wishlist: ${esc(p.name)}"><svg><use href="#i-heart"/></svg></button>`;
 
+  // Selling price with the MRP struck through and the saving, as Indian shoppers expect.
+  const priceHTML = (p) =>
+    `${Store.formatINR(p.price)}${p.off ? ` <s aria-label="MRP ${Store.formatINR(p.mrp)}">${Store.formatINR(p.mrp)}</s> <span class="price-off">${p.off}% off</span>` : ""}`;
+
   function productCard(p) {
     return `<li class="product-card" data-id="${p.id}">
       <div class="product-media">
@@ -265,10 +269,10 @@
         <button class="quick-btn" data-quick="${p.id}" aria-label="Quick view: ${esc(p.name)}"><svg><use href="#i-eye"/></svg><span>Quick View</span></button>
       </div>
       <div class="product-info">
-        <p class="product-meta">${esc(p.metal)} · ${esc(p.type)}</p>
+        <p class="product-meta">${esc(p.finish)} · ${esc(p.type)}</p>
         <h3 class="product-name"><button data-quick="${p.id}">${esc(p.name)}</button></h3>
         <div class="product-buy">
-          <p class="product-price">${Store.formatINR(p.price)}</p>
+          <p class="product-price">${priceHTML(p)}</p>
           <button class="add-link" data-add="${p.id}">Add to Bag</button>
         </div>
       </div>
@@ -321,39 +325,33 @@
   function openQuickView(id) {
     const p = Store.byId(id);
     if (!p) return;
-    const b = p.breakup;
     $(".qv-body", qv).innerHTML = `
       <figure class="qv-media"><img src="${p.img}" alt="${esc(p.alt)}" width="800" height="800" /></figure>
       <div class="qv-info">
         <p class="eyebrow">${esc(p.type)}</p>
         <h2 id="qv-title">${esc(p.name)}</h2>
-        <p class="qv-price">${Store.formatINR(p.price)} <small>incl. GST</small></p>
+        <p class="qv-price">${priceHTML(p)} <small>incl. GST</small></p>
         <dl class="qv-specs">
-          <div><dt>Metal</dt><dd>${esc(p.metal)}</dd></div>
-          <div><dt>Weight</dt><dd>${esc(p.weight)}</dd></div>
-          <div><dt>Details</dt><dd>${esc(p.stones)}</dd></div>
+          <div><dt>Finish</dt><dd>${esc(p.finish)}</dd></div>
+          <div><dt>Base metal</dt><dd>${esc(p.base)}</dd></div>
+          <div><dt>Stones</dt><dd>${esc(p.stones)}</dd></div>
+          <div><dt>In the box</dt><dd>${esc(p.includes)}</dd></div>
         </dl>
         <details class="qv-breakup">
-          <summary>Price breakup</summary>
-          <dl>
-            <div><dt>Metal value</dt><dd>${Store.formatINR(b.metal)}</dd></div>
-            ${b.stones ? `<div><dt>Stone value</dt><dd>${Store.formatINR(b.stones)}</dd></div>` : ""}
-            <div><dt>Making charges</dt><dd>${Store.formatINR(b.making)}</dd></div>
-            <div><dt>GST (3%)</dt><dd>${Store.formatINR(p.gst)}</dd></div>
-            <div class="total"><dt>Total</dt><dd>${Store.formatINR(p.price)}</dd></div>
-          </dl>
+          <summary>Care &amp; material</summary>
+          <p class="qv-care">This is imitation jewellery: ${p.finish.includes("Rolled") ? "a thick layer of gold alloy bonded over" : "a gold-tone plating over"} ${esc(p.base.toLowerCase())}, not solid gold. Keep it away from water, perfume and lotion, wipe it with a soft cloth after wear, and store it in the zip pouch provided.</p>
         </details>
         <form class="qv-form">
-          ${p.sizes ? `<label class="field"><span>Ring size</span><select name="size">${p.sizes.map((s, i) => `<option ${i === Math.floor(p.sizes.length / 2) ? "selected" : ""}>${s}</option>`).join("")}</select></label>` : ""}
+          ${p.sizes ? `<label class="field"><span>Size</span><select name="size">${p.sizes.map((s, i) => `<option ${i === Math.floor(p.sizes.length / 2) ? "selected" : ""}>${s}</option>`).join("")}</select></label>` : ""}
           <div class="qv-actions">
             <button type="submit" class="btn btn-emerald"><svg><use href="#i-bag"/></svg>Add to Bag</button>
             ${heartBtn(p, "wish-btn wish-btn-lg")}
           </div>
         </form>
         <ul class="qv-assure">
-          <li><svg><use href="#i-hallmark"/></svg>${p.metal.includes("22KT") ? "BIS Hallmarked with HUID" : "BIS Hallmarked · certified stones"}</li>
-          <li><svg><use href="#i-truck"/></svg>Free insured delivery in 3–5 days</li>
-          <li><svg><use href="#i-gem"/></svg>Lifetime exchange · 15-day returns</li>
+          <li><svg><use href="#i-hallmark"/></svg>Anti-tarnish coated · skin-friendly finish</li>
+          <li><svg><use href="#i-truck"/></svg>Delivery in 3–6 days · Cash on Delivery available</li>
+          <li><svg><use href="#i-gem"/></svg>7-day easy returns</li>
         </ul>
       </div>`;
     $(".qv-form", qv).addEventListener("submit", (e) => {
@@ -390,7 +388,7 @@
           <img src="${l.product.img}" alt="" width="88" height="88" />
           <div>
             <p class="li-name">${esc(l.product.name)}</p>
-            <p class="li-meta">${esc(l.product.metal)}${l.size ? ` · Size ${esc(l.size)}` : ""}</p>
+            <p class="li-meta">${esc(l.product.finish)}${l.size ? ` · Size ${esc(l.size)}` : ""}</p>
             <div class="qty" role="group" aria-label="Quantity for ${esc(l.product.name)}">
               <button data-qty="-1" data-id="${l.id}" data-size="${l.size ?? ""}" aria-label="Decrease quantity">−</button>
               <span aria-live="polite">${l.qty}</span>
@@ -406,9 +404,9 @@
       foot.innerHTML = `
         <dl class="totals">
           <div><dt>Subtotal</dt><dd>${Store.formatINR(t.total)}</dd></div>
-          <div><dt>Insured shipping</dt><dd>Free</dd></div>
+          <div><dt>Shipping</dt><dd>${t.shipping ? Store.formatINR(t.shipping) : "Free"}</dd></div>
         </dl>
-        <p class="fine">Includes ${Store.formatINR(t.gst)} GST. No-cost EMI available at checkout.</p>
+        <p class="fine">${t.toFree ? `Add ${Store.formatINR(t.toFree)} more for free shipping. ` : ""}Includes ${Store.formatINR(t.gst)} GST. Cash on Delivery available at checkout.</p>
         <a class="btn btn-gold btn-block" href="checkout.html"><svg><use href="#i-lock"/></svg>Secure Checkout</a>`;
     } else {
       const items = Store.wishlist();
@@ -417,7 +415,7 @@
         ? `<ul class="line-items">${items.map((p) => `
             <li>
               <img src="${p.img}" alt="" width="88" height="88" />
-              <div><p class="li-name">${esc(p.name)}</p><p class="li-meta">${esc(p.metal)}</p><p class="li-price">${Store.formatINR(p.price)}</p></div>
+              <div><p class="li-name">${esc(p.name)}</p><p class="li-meta">${esc(p.finish)}</p><p class="li-price">${Store.formatINR(p.price)}</p></div>
               <div class="li-end"><button class="btn btn-emerald btn-sm" data-add="${p.id}">Add to Bag</button><button class="li-remove" data-wish="${p.id}">Remove</button></div>
             </li>`).join("")}</ul>`
         : `<div class="drawer-empty"><svg><use href="#i-heart"/></svg><p>Tap the heart on any piece to save it here.</p></div>`;
@@ -459,13 +457,13 @@
     const terms = q.split(/\s+/).filter(Boolean);
     const items = q
       ? Store.PRODUCTS.filter((p) => {
-          const words = [p.name, p.type, p.metal, p.stones, ...p.tags].join(" ").toLowerCase().split(/[^a-z0-9]+/);
+          const words = [p.name, p.type, p.finish, p.base, p.stones, ...p.tags, p.tags.includes("ad") ? "american diamond cz" : "", p.tags.includes("onegram") ? "1gm one gram" : ""].join(" ").toLowerCase().split(/[^a-z0-9]+/);
           return terms.every((t) => words.some((w) => w.startsWith(t)));
         })
       : Store.PRODUCTS.slice(0, 4);
     results.innerHTML = items.length
-      ? items.map((p) => `<li><button data-quick="${p.id}"><img src="${p.img}" alt="" width="56" height="56"/><span><strong>${esc(p.name)}</strong>${esc(p.metal)} · ${Store.formatINR(p.price)}</span></button></li>`).join("")
-      : `<li class="no-results">No pieces match “${esc(q)}”. Try “ring”, “22KT” or “bridal”.</li>`;
+      ? items.map((p) => `<li><button data-quick="${p.id}"><img src="${p.img}" alt="" width="56" height="56"/><span><strong>${esc(p.name)}</strong>${esc(p.finish)} · ${Store.formatINR(p.price)}</span></button></li>`).join("")
+      : `<li class="no-results">No pieces match “${esc(q)}”. Try “necklace”, “AD” or “bridal”.</li>`;
   }
   searchInput.addEventListener("input", renderSearch);
   search.addEventListener("close", () => lockScroll(false));
