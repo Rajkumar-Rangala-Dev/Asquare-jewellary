@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en-IN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Secure Checkout — Asquare Jewellery</title>
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#064E3B" />
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="css/fonts.css" />
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/checkout.css" />
+  </head>
+  <body class="checkout-page">
+    <svg width="0" height="0" class="sr-only" aria-hidden="true">
+      <symbol id="mark" viewBox="0 0 48 48">
+        <path class="mark-gem" d="M24 2.5 45.5 24 24 45.5 2.5 24z" />
+        <path class="mark-inner" d="M24 7.5 40.5 24 24 40.5 7.5 24z" />
+        <path class="mark-a" d="M17.2 31.2 24 14.6l6.8 16.6M19.4 26h9.2M15.6 31.2h3.4M29 31.2h3.4" />
+      </symbol>
+      <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="9.5" rx="1.5" /><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5" /><circle cx="12" cy="15.2" r="1.2" /></symbol>
+      <symbol id="i-chev-l" viewBox="0 0 24 24"><path d="M14.5 6l-6 6 6 6" /></symbol>
+      <symbol id="i-hallmark" viewBox="0 0 24 24"><path d="M12 3l7 3v5.5c0 4.3-3 7.8-7 9.5-4-1.7-7-5.2-7-9.5V6z" /><path d="M8.7 12.2l2.3 2.3 4.4-4.6" /></symbol>
+      <symbol id="i-truck" viewBox="0 0 24 24"><path d="M2.5 6.5h11v9.5h-11zM13.5 9.5h4l3 3.2v3.3h-7" /><circle cx="6.5" cy="17.5" r="1.8" /><circle cx="17" cy="17.5" r="1.8" /></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" /></symbol>
+    </svg>
+
+    <header class="site-header checkout-header">
+      <div class="header-inner">
+        <a class="back-link" href="index.html"><svg><use href="#i-chev-l" /></svg><span>Continue shopping</span></a>
+        <a href="index.html" class="logo" aria-label="Asquare Jewellery — home">
+          <svg class="logo-mark" aria-hidden="true"><use href="#mark" /></svg>
+          <span class="logo-type"><span class="logo-name">ASQUARE</span><span class="logo-sub">JEWELLERY</span></span>
+        </a>
+        <p class="secure-tag"><svg><use href="#i-lock" /></svg><span>Secure checkout</span></p>
+      </div>
+    </header>
+
+    <main class="checkout container" id="main">
+      <form class="checkout-form" id="checkout-form" novalidate>
+        <h1 class="section-title">Checkout</h1>
+
+        <fieldset class="co-step">
+          <legend><span class="co-no">1</span>Contact</legend>
+          <div class="co-grid">
+            <label class="field"><span>Email</span><input name="email" type="email" autocomplete="email" required /><small class="err"></small></label>
+            <label class="field"><span>Mobile number</span><input name="phone" type="tel" inputmode="numeric" autocomplete="tel-national" pattern="[6-9][0-9]{9}" maxlength="10" placeholder="10-digit mobile" required /><small class="err"></small></label>
+          </div>
+          <p class="hint">We'll send order updates and the delivery OTP to this number.</p>
+        </fieldset>
+
+        <fieldset class="co-step">
+          <legend><span class="co-no">2</span>Delivery address</legend>
+          <div class="co-grid">
+            <label class="field span-2"><span>Full name</span><input name="name" autocomplete="name" required /><small class="err"></small></label>
+            <label class="field span-2"><span>Flat, house no., building</span><input name="line1" autocomplete="address-line1" required /><small class="err"></small></label>
+            <label class="field span-2"><span>Area, street, landmark</span><input name="line2" autocomplete="address-line2" /></label>
+            <label class="field"><span>PIN code</span><input name="pin" inputmode="numeric" autocomplete="postal-code" pattern="[1-9][0-9]{5}" maxlength="6" required /><small class="err"></small></label>
+            <label class="field"><span>City</span><input name="city" autocomplete="address-level2" required /><small class="err"></small></label>
+            <label class="field span-2"><span>State</span>
+              <select name="state" autocomplete="address-level1" required>
+                <option value="">Select state</option>
+                <option>Andhra Pradesh</option><option>Assam</option><option>Bihar</option><option>Chandigarh</option><option>Chhattisgarh</option><option>Delhi</option><option>Goa</option><option>Gujarat</option><option>Haryana</option><option>Himachal Pradesh</option><option>Jammu &amp; Kashmir</option><option>Jharkhand</option><option>Karnataka</option><option>Kerala</option><option>Madhya Pradesh</option><option>Maharashtra</option><option>Odisha</option><option>Puducherry</option><option>Punjab</option><option>Rajasthan</option><option>Tamil Nadu</option><option>Telangana</option><option>Uttar Pradesh</option><option>Uttarakhand</option><option>West Bengal</option>
+              </select><small class="err"></small>
+            </label>
+          </div>
+          <div class="choice-list" role="radiogroup" aria-label="Delivery method">
+            <label class="choice"><input type="radio" name="delivery" value="insured" checked /><span><strong>Insured express delivery</strong>3–5 working days · OTP-verified handover</span><em>Free</em></label>
+            <label class="choice"><input type="radio" name="delivery" value="pickup" /><span><strong>Collect from the atelier</strong>Bandra West, Mumbai · ready in 2 days</span><em>Free</em></label>
+          </div>
+        </fieldset>
+
+        <fieldset class="co-step">
+          <legend><span class="co-no">3</span>Payment</legend>
+          <div class="choice-list" role="radiogroup" aria-label="Payment method">
+            <label class="choice"><input type="radio" name="pay" value="upi" checked /><span><strong>UPI</strong>Google Pay, PhonePe, Paytm or any UPI app</span></label>
+            <label class="choice"><input type="radio" name="pay" value="card" /><span><strong>Credit / Debit card</strong>Visa, Mastercard, RuPay, Amex</span></label>
+            <label class="choice"><input type="radio" name="pay" value="emi" /><span><strong>No-cost EMI</strong>3, 6 or 9 months on leading bank cards</span></label>
+            <label class="choice"><input type="radio" name="pay" value="netbanking" /><span><strong>Net banking</strong>All major Indian banks</span></label>
+          </div>
+          <p class="hint"><svg><use href="#i-lock" /></svg>You'll complete payment on our PCI-DSS compliant gateway. We never store card details.</p>
+        </fieldset>
+
+        <label class="consent"><input type="checkbox" name="terms" required /><span>I agree to the <a href="#">terms of sale</a> and <a href="#">returns policy</a>.</span></label>
+        <small class="err consent-err"></small>
+
+        <button class="btn btn-gold btn-block pay-btn" type="submit"><svg><use href="#i-lock" /></svg><span>Pay securely</span></button>
+      </form>
+
+      <aside class="order-summary" aria-labelledby="summary-title">
+        <div class="summary-card">
+          <h2 id="summary-title">Order summary</h2>
+          <ul class="summary-lines"></ul>
+          <div class="coupon">
+            <label class="sr-only" for="coupon">Gift card or coupon</label>
+            <input id="coupon" placeholder="Gift card or coupon" autocomplete="off" />
+            <button type="button" class="btn btn-emerald btn-sm" id="apply-coupon">Apply</button>
+          </div>
+          <p class="coupon-msg" role="status"></p>
+          <dl class="totals summary-totals"></dl>
+          <ul class="summary-assure">
+            <li><svg><use href="#i-hallmark" /></svg>BIS hallmarked · certificates in the box</li>
+            <li><svg><use href="#i-truck" /></svg>Fully insured until it reaches you</li>
+          </ul>
+        </div>
+      </aside>
+
+      <section class="confirmation" hidden aria-live="polite" tabindex="-1">
+        <svg class="confirm-mark" aria-hidden="true"><use href="#mark" /></svg>
+        <p class="eyebrow">Order received</p>
+        <h1 class="section-title">Thank you, <em class="confirm-name"></em></h1>
+        <p class="confirm-text"></p>
+        <a class="btn btn-emerald" href="index.html">Back to Asquare</a>
+      </section>
+    </main>
+
+    <script src="js/store.js" defer></script>
+    <script src="js/checkout.js" defer></script>
+  </body>
+</html>
