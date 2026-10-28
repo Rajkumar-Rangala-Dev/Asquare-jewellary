@@ -14,14 +14,15 @@
   const payLabel = $(".pay-btn span");
 
   // Demo coupon so the flow can be tested end to end. Validate coupons server-side in production.
-  const COUPONS = { ASQUARE5: { pct: 5, cap: 5000, label: "5% off making charges" } };
+  const COUPONS = { ASQUARE10: { pct: 10, cap: 500, label: "10% off (up to ₹500)" } };
   let coupon = null;
 
   function totals() {
     const t = Store.bagTotals();
-    const making = Store.bag().reduce((s, l) => s + l.product.breakup.making * l.qty, 0);
-    const discount = coupon ? Math.min(coupon.cap, Math.round((making * coupon.pct) / 100)) : 0;
-    return { ...t, discount, grand: t.total - discount };
+    const discount = coupon ? Math.min(coupon.cap, Math.round((t.total * coupon.pct) / 100)) : 0;
+    // Free shipping is judged on the bag value before coupons; store pickup never pays shipping.
+    const shipping = form.delivery.value === "pickup" ? 0 : t.shipping;
+    return { ...t, discount, shipping, grand: t.total - discount + shipping };
   }
 
   function renderSummary() {
@@ -33,23 +34,25 @@
       c.hidden = false;
       $(".eyebrow", c).textContent = "Your bag is empty";
       $(".section-title", c).innerHTML = "Find something <em>to treasure</em>";
-      $(".confirm-text", c).textContent = "Explore our best-selling gold, diamond and bridal pieces.";
+      $(".confirm-text", c).textContent = "Explore our best-selling temple, AD stone and bridal sets.";
       return;
     }
     lines.innerHTML = bag.map((l) => `
       <li>
         <span class="thumb"><img src="${l.product.img}" alt="" width="64" height="64" /><b>${l.qty}</b></span>
-        <span class="sl-name">${esc(l.product.name)}<small>${esc(l.product.metal)}${l.size ? ` · Size ${esc(l.size)}` : ""}</small></span>
+        <span class="sl-name">${esc(l.product.name)}<small>${esc(l.product.finish)}${l.size ? ` · Size ${esc(l.size)}` : ""}</small></span>
         <span class="sl-price">${Store.formatINR(l.product.price * l.qty)}</span>
       </li>`).join("");
     const t = totals();
     totalsEl.innerHTML = `
       <div><dt>Subtotal</dt><dd>${Store.formatINR(t.total)}</dd></div>
       ${t.discount ? `<div class="discount"><dt>${esc(coupon.label)}</dt><dd>−${Store.formatINR(t.discount)}</dd></div>` : ""}
-      <div><dt>Shipping &amp; insurance</dt><dd>Free</dd></div>
+      <div><dt>Shipping</dt><dd>${t.shipping ? Store.formatINR(t.shipping) : "Free"}</dd></div>
       <div class="grand"><dt>Total</dt><dd>${Store.formatINR(t.grand)}</dd></div>
-      <p class="fine">Includes ${Store.formatINR(t.gst)} GST (3%).</p>`;
-    payLabel.textContent = `Pay ${Store.formatINR(t.grand)} securely`;
+      <p class="fine">${t.toFree && form.delivery.value !== "pickup" ? `Add ${Store.formatINR(t.toFree)} more for free shipping. ` : ""}Includes ${Store.formatINR(t.gst)} GST.</p>`;
+    const shipLabel = $("[data-ship-label]");
+    if (shipLabel) shipLabel.textContent = t.toFree ? Store.formatINR(Store.bagTotals().shipping) : "Free";
+    payLabel.textContent = form.pay.value === "cod" ? `Place order · Pay ${Store.formatINR(t.grand)} on delivery` : `Pay ${Store.formatINR(t.grand)} securely`;
   }
 
   // ---- validation
@@ -91,8 +94,11 @@
         form[n].closest(".field").classList.toggle("is-muted", pickup);
         if (pickup) { form[n].removeAttribute("aria-invalid"); form[n].closest(".field").querySelector(".err").textContent = ""; }
       });
+      renderSummary();
     })
   );
+  // Button label and total depend on the payment method (COD) too.
+  form.querySelectorAll('input[name="pay"]').forEach((r) => r.addEventListener("change", renderSummary));
 
   // ---- coupon
   $("#apply-coupon").addEventListener("click", () => {
@@ -141,7 +147,8 @@
     $(".confirm-name", c).textContent = first;
     $(".confirm-text", c).textContent =
       `Order ${order.id} for ${Store.formatINR(t.grand)} is confirmed. ` +
-      (form.delivery.value === "pickup" ? "We'll message you when it is ready at the atelier." : `We'll send tracking to ${form.phone.value} once your insured parcel is on its way.`);
+      (form.delivery.value === "pickup" ? "We'll message you when it is ready at the store." : `We'll send tracking to ${form.phone.value} once your parcel is on its way.`) +
+      (form.pay.value === "cod" ? " Please keep the amount ready in cash or UPI at delivery." : "");
     form.hidden = true;
     $(".order-summary").hidden = true;
     c.hidden = false;

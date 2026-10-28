@@ -1,6 +1,6 @@
 # Asquare Jewellery: e-commerce homepage
 
-A static homepage and checkout for Asquare Jewellery. The palette is Royal Emerald, Champagne Gold, Warm Ivory and Charcoal. Headings use Cormorant Garamond and body text uses Jost. Two motion films were built in [HyperFrames](https://hyperframes.heygen.com), rendered to image sequences, and drawn onto canvases frame by frame as the visitor scrolls.
+A static homepage and checkout for Asquare Jewellery, a 1 gram gold and rolled gold (imitation) jewellery brand. The palette is Royal Emerald, Champagne Gold, Warm Ivory and Charcoal. Headings use Cormorant Garamond and body text uses Jost. Two motion films were built in [HyperFrames](https://hyperframes.heygen.com), rendered to image sequences, and drawn onto canvases frame by frame as the visitor scrolls.
 
 There is no build step. Serve `site/` from any static host:
 
@@ -44,9 +44,9 @@ motion/
 
 ## The motion films
 
-**Hero (6 s at 24 fps).** A gold arch draws itself on emerald, and a 22KT temple necklace is revealed inside it. A band of light passes over the gold and facets glint. The arch then moves aside to make room for the headline. On the site, frames 0–95 play once on load and frames 96–143 are scrubbed by scroll, so the arch opens to a full-bleed shot as you scroll. Phones get a separate portrait render.
+**Hero (6 s at 24 fps).** A gold arch draws itself on emerald, and a temple-style necklace is revealed inside it. A band of light passes over the gold and facets glint. The arch then moves aside to make room for the headline. On the site, frames 0–95 play once on load and frames 96–143 are scrubbed by scroll, so the arch opens to a full-bleed shot as you scroll. Phones get a separate portrait render.
 
-**Craft (5 s at 24 fps).** A round brilliant diamond is built from real facet geometry: 57 facets, depth-sorted and lit. Its edges are sketched, the facets fill with light, the gold shank and claws close around the stone, and the stone is polished to a sparkle. Scrolling through the "About Asquare" section scrubs the film, and the four step captions stay in sync with it.
+**Craft (5 s at 24 fps).** A round brilliant diamond is built from real facet geometry: 57 facets, depth-sorted and lit. Its edges are sketched, the facets fill with light, the gold shank and claws close around the stone, and the stone is polished to a sparkle. Scrolling through the "About Asquare" section scrubs the film, and the four step captions (Sketch, Stone, Plate, Protect) stay in sync with it.
 
 To re-render after editing a composition (requires FFmpeg and `npx hyperframes browser ensure`):
 
@@ -65,14 +65,15 @@ If you change frame counts, update `HERO` / `CRAFT` at the top of the hero and c
 - **Loading.** The hero preloads frame 0 and streams the rest. If a frame hasn't arrived yet, the player draws the nearest loaded one, so playback never stalls. Craft frames start loading one screen before the section.
 - **Reduced motion / data saver.** No smooth scroll and no autoplay. The hero and craft sections show a static still and every step caption is visible.
 - **Accessibility.** Includes a skip link, visible focus styles, a native `<dialog>` for quick view and search, an `inert`-backed drawer, `aria-pressed` on wishlist and filter buttons, and labelled form errors. Small gold text on emerald uses `--gold-soft` (4.9:1). Gold is never used for text on ivory.
-- **Prices.** Each product stores metal value, making charges and stone value. GST (3%) and totals are derived from those numbers, so the quick-view breakup always adds up.
+- **Prices and shipping.** Each product stores its selling price (GST included) and MRP; the discount and the GST share are derived. Shipping is ₹79 below ₹999 and free above it (`FREE_SHIPPING_FROM` / `SHIPPING_FEE` in `js/store.js`). Store pickup is always free.
+- **Material honesty.** Every product lists its finish, base metal and stones, and the site states that pieces are plated or rolled gold, not solid gold. Keep it that way when adding products: avoid hallmark, karat (22KT/18KT) or diamond-certificate claims, which apply only to precious metal and natural stones.
 
 ## Before going live
 
 These parts are placeholders and need real data or integrations:
 
-- **Catalogue**: `PRODUCTS` in `js/store.js`. Prices, weights and stone details are illustrative. Replace them with your catalogue or API, and connect live gold rates if pricing follows the day's rate.
-- **Payments**: `createOrder()` in `js/checkout.js` simulates success. Connect it to your order API and gateway (Razorpay, PayU, Cashfree) and resolve only after payment succeeds. Validate coupons on the server. `ASQUARE5` is a demo code.
+- **Catalogue**: `PRODUCTS` in `js/store.js`. Prices, finishes and stone details are illustrative. Replace them with your catalogue or API.
+- **Payments**: `createOrder()` in `js/checkout.js` simulates success. Connect it to your order API and gateway (Razorpay, PayU, Cashfree) and resolve only after payment succeeds; Cash on Delivery orders skip the gateway. Validate coupons on the server. `ASQUARE10` is a demo code.
 - **Newsletter**: the form validates but doesn't send anything yet. Connect it to your email provider.
 - **Copy**: testimonials, address, phone and email are placeholders. So are the Instagram links and footer policy links.
 - **Photography**: the photos come from Unsplash (free to use under the [Unsplash License](https://unsplash.com/license)). Swap in Asquare's own product shoots when they're ready, and keep product backgrounds neutral.

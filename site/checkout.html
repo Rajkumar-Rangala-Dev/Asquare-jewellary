@@ -46,7 +46,7 @@
             <label class="field"><span>Email</span><input name="email" type="email" autocomplete="email" required /><small class="err"></small></label>
             <label class="field"><span>Mobile number</span><input name="phone" type="tel" inputmode="numeric" autocomplete="tel-national" pattern="[6-9][0-9]{9}" maxlength="10" placeholder="10-digit mobile" required /><small class="err"></small></label>
           </div>
-          <p class="hint">We'll send order updates and the delivery OTP to this number.</p>
+          <p class="hint">We'll send order and delivery updates to this number.</p>
         </fieldset>
 
         <fieldset class="co-step">
@@ -65,8 +65,8 @@
             </label>
           </div>
           <div class="choice-list" role="radiogroup" aria-label="Delivery method">
-            <label class="choice"><input type="radio" name="delivery" value="insured" checked /><span><strong>Insured express delivery</strong>3–5 working days · OTP-verified handover</span><em>Free</em></label>
-            <label class="choice"><input type="radio" name="delivery" value="pickup" /><span><strong>Collect from the atelier</strong>Bandra West, Mumbai · ready in 2 days</span><em>Free</em></label>
+            <label class="choice"><input type="radio" name="delivery" value="standard" checked /><span><strong>Standard delivery</strong>3–6 working days · tracked shipping</span><em data-ship-label>Free</em></label>
+            <label class="choice"><input type="radio" name="delivery" value="pickup" /><span><strong>Collect from the store</strong>Bandra West, Mumbai · ready in 2 days</span><em>Free</em></label>
           </div>
         </fieldset>
 
@@ -75,10 +75,10 @@
           <div class="choice-list" role="radiogroup" aria-label="Payment method">
             <label class="choice"><input type="radio" name="pay" value="upi" checked /><span><strong>UPI</strong>Google Pay, PhonePe, Paytm or any UPI app</span></label>
             <label class="choice"><input type="radio" name="pay" value="card" /><span><strong>Credit / Debit card</strong>Visa, Mastercard, RuPay, Amex</span></label>
-            <label class="choice"><input type="radio" name="pay" value="emi" /><span><strong>No-cost EMI</strong>3, 6 or 9 months on leading bank cards</span></label>
             <label class="choice"><input type="radio" name="pay" value="netbanking" /><span><strong>Net banking</strong>All major Indian banks</span></label>
+            <label class="choice"><input type="radio" name="pay" value="cod" /><span><strong>Cash on Delivery</strong>Pay in cash or UPI when your order arrives</span></label>
           </div>
-          <p class="hint"><svg><use href="#i-lock" /></svg>You'll complete payment on our PCI-DSS compliant gateway. We never store card details.</p>
+          <p class="hint"><svg><use href="#i-lock" /></svg>Online payments run on a PCI-DSS compliant gateway. We never store card details.</p>
         </fieldset>
 
         <label class="consent"><input type="checkbox" name="terms" required /><span>I agree to the <a href="#">terms of sale</a> and <a href="#">returns policy</a>.</span></label>
@@ -99,8 +99,8 @@
           <p class="coupon-msg" role="status"></p>
           <dl class="totals summary-totals"></dl>
           <ul class="summary-assure">
-            <li><svg><use href="#i-hallmark" /></svg>BIS hallmarked · certificates in the box</li>
-            <li><svg><use href="#i-truck" /></svg>Fully insured until it reaches you</li>
+            <li><svg><use href="#i-hallmark" /></svg>Anti-tarnish coated · care card in every box</li>
+            <li><svg><use href="#i-truck" /></svg>Tracked shipping · 7-day easy returns</li>
           </ul>
         </div>
       </aside>
