@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>Asquare Jewellery — hero film (portrait, for phones)</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <link rel="stylesheet" href="../film.css" />
+    <style>
+      #root {
+        position: relative;
+        overflow: hidden;
+        background: radial-gradient(ellipse 80% 75% at 50% 45%, #075640 0%, var(--emerald) 45%, var(--emerald-deep) 100%);
+      }
+      html, body, #root { --W: 1080px; --H: 1920px; width: 1080px; height: 1920px; }
+      :root { --vignette: linear-gradient(0deg, rgba(3, 57, 43, 0.9) 0%, rgba(3, 57, 43, 0.4) 30%, rgba(3, 57, 43, 0) 50%); }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="6" data-width="1080" data-height="1920" data-fps="24">
+      <svg class="layer" viewBox="0 0 1080 1920"><g id="echoGroup"></g></svg>
+      <div id="window">
+        <div id="reveal">
+          <img id="photo" src="../assets/necklace.webp" alt="" />
+          <div id="sweep"></div>
+          <div id="glints" class="layer"></div>
+        </div>
+      </div>
+      <div id="vignette" class="layer"></div>
+      <svg class="layer" viewBox="0 0 1080 1920"><g id="frameGroup"></g><g id="keystoneMove"><g id="keystone"></g></g></svg>
+      <div id="dust" class="layer"></div>
+    </div>
+    <script>
+      window.LAYOUT = {
+        W: 1080,
+        H: 1920,
+        photo: { width: 2771, keys: [{ x: -560, y: 0 }, { x: -560, y: 0 }, { x: -560, y: 0, s: 1 }] },
+        a0: { x: 250, w: 580, top: 380 },
+        a1: { x: 170, w: 740, top: 230 },   // headline overlays the lower part on the site
+        a2: { x: -2600, w: 6280, top: -1800 },
+        sweep: [-100, 900, -100, 1000],
+        glints: [
+          { x: 470, y: 700, t: 1.5, s: 0.85 },
+          { x: 640, y: 980, t: 1.85, s: 0.7 },
+          { x: 380, y: 1300, t: 2.2, s: 1.0 },
+          { x: 720, y: 560, t: 3.4, s: 0.8 },
+          { x: 300, y: 900, t: 3.75, s: 0.95 },
+          { x: 820, y: 1450, t: 4.6, s: 0.7 },
+          { x: 200, y: 1150, t: 5.2, s: 0.9 },
+        ],
+        dust: 48,
+      };
+    </script>
+    <script src="../film.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = window.buildHeroFilm();
+    </script>
+  </body>
+</html>

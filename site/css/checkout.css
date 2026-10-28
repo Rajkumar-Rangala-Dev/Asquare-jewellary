@@ -1,0 +1,77 @@
+/* Asquare Jewellery — checkout page */
+.checkout-header .header-inner { grid-template-columns: 1fr auto 1fr; }
+.checkout-header .logo { justify-self: center; }
+.back-link, .secure-tag { display: inline-flex; align-items: center; gap: 8px; font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(250, 247, 240, 0.85); }
+.back-link:hover { color: var(--gold-soft); }
+.secure-tag { justify-self: end; color: var(--gold-soft); }
+@media (max-width: 640px) { .back-link span, .secure-tag span { display: none; } }
+
+.checkout { display: grid; grid-template-columns: 1.25fr 1fr; gap: clamp(32px, 6vw, 96px); align-items: start; padding-top: clamp(40px, 6vw, 80px); padding-bottom: 120px; }
+.checkout-form > .section-title { margin-bottom: 32px; }
+.co-step { margin: 0 0 40px; padding: 0; border: 0; min-width: 0; }
+.co-step legend { display: flex; align-items: center; gap: 14px; padding: 0; margin-bottom: 20px; font-family: var(--serif); font-size: 1.6rem; }
+.co-no { position: relative; display: grid; place-items: center; width: 34px; height: 34px; font-family: var(--sans); font-size: 0.8rem; color: var(--emerald); }
+.co-no::before { content: ""; position: absolute; inset: 5px; border: 1px solid var(--gold-deep); transform: rotate(45deg); }
+.co-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 18px; }
+.co-grid .span-2 { grid-column: 1 / -1; }
+.field { display: grid; gap: 8px; }
+.field.is-muted { opacity: 0.45; }
+.field input, .field select { width: 100%; }
+.field input[aria-invalid="true"], .field select[aria-invalid="true"] { border-color: #b4483c; }
+.err { min-height: 1em; font-size: 0.78rem; color: #a23b30; }
+.hint { display: flex; gap: 8px; align-items: center; margin-top: 12px; font-size: 0.82rem; color: var(--muted); }
+.hint svg { color: var(--emerald); }
+
+.choice-list { display: grid; gap: 10px; margin-top: 20px; }
+.choice { position: relative; display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: center; padding: 16px 18px; border: 1px solid var(--line); background: #fff; cursor: pointer; transition: border-color 0.3s, box-shadow 0.3s; }
+.choice:hover { border-color: rgba(6, 78, 59, 0.4); }
+.choice:has(input:checked) { border-color: var(--emerald); box-shadow: inset 0 0 0 1px var(--emerald); }
+.choice input { width: 18px; height: 18px; accent-color: var(--emerald); margin: 0; }
+.choice strong { display: block; font-weight: 500; font-size: 0.95rem; }
+.choice span { font-size: 0.82rem; color: var(--muted); }
+.choice em { font-style: normal; font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--emerald); }
+
+.consent { display: flex; gap: 12px; align-items: flex-start; font-size: 0.88rem; color: var(--muted); }
+.consent input { width: 18px; height: 18px; margin-top: 3px; accent-color: var(--emerald); }
+.consent a { color: var(--emerald); text-decoration: underline; text-underline-offset: 3px; }
+.consent-err { display: block; margin: 6px 0 18px 30px; }
+.pay-btn { min-height: 58px; }
+.pay-btn.is-busy { opacity: 0.8; cursor: progress; }
+
+.order-summary { position: sticky; top: calc(var(--header-h) + 24px); }
+.summary-card { padding: clamp(24px, 3vw, 36px); background: var(--ivory-2); }
+.summary-card h2 { font-family: var(--serif); font-weight: 400; font-size: 1.6rem; margin-bottom: 18px; }
+.summary-lines li { display: grid; grid-template-columns: 64px 1fr auto; gap: 14px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.thumb { position: relative; }
+.thumb img { width: 64px; height: 64px; object-fit: cover; }
+.thumb b { position: absolute; top: -7px; right: -7px; min-width: 20px; height: 20px; border-radius: 10px; background: var(--emerald); color: #fff; font-size: 0.68rem; font-weight: 500; line-height: 20px; text-align: center; }
+.sl-name { font-family: var(--serif); font-size: 1.05rem; font-weight: 500; line-height: 1.25; }
+.sl-name small { display: block; font-family: var(--sans); font-size: 0.74rem; font-weight: 400; color: var(--muted); }
+.sl-price { font-size: 0.92rem; font-weight: 500; }
+.coupon { display: grid; grid-template-columns: 1fr auto; gap: 8px; margin-top: 20px; }
+.coupon input { min-height: 40px; padding: 0 12px; border: 1px solid var(--line); background: #fff; font: inherit; }
+.coupon input:focus { outline: none; border-color: var(--emerald); }
+.coupon-msg { min-height: 1.3em; margin-top: 6px; font-size: 0.8rem; color: var(--emerald); }
+.coupon-msg.is-error { color: #a23b30; }
+.summary-totals { margin-top: 8px; }
+.summary-totals .discount dd { color: var(--emerald); }
+.summary-totals .grand { margin-top: 8px; padding-top: 12px; border-top: 1px solid var(--line); }
+.summary-totals .grand dt { font-weight: 500; }
+.summary-totals .grand dd { font-family: var(--serif); font-size: 1.6rem; font-weight: 500; }
+.summary-assure { display: grid; gap: 8px; margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--line); }
+.summary-assure li { display: flex; gap: 10px; align-items: center; font-size: 0.82rem; color: var(--muted); }
+.summary-assure svg { font-size: 1.15rem; color: var(--gold-deep); }
+
+.confirmation { grid-column: 1 / -1; display: grid; justify-items: center; gap: 14px; padding: 60px 0 40px; text-align: center; }
+.confirmation:focus { outline: none; }
+.confirm-mark { width: 72px; height: 72px; margin-bottom: 10px; }
+.confirm-mark .mark-gem, .confirm-mark .mark-inner, .confirm-mark .mark-a { stroke: var(--gold-deep); }
+.confirm-mark .mark-inner { opacity: 0.5; }
+.confirmation .section-title em { color: var(--emerald); }
+.confirm-text { max-width: 520px; color: var(--muted); margin-bottom: 18px; }
+
+@media (max-width: 900px) {
+  .checkout { grid-template-columns: 1fr; }
+  .order-summary { position: static; order: -1; }
+}
+@media (max-width: 560px) { .co-grid { grid-template-columns: 1fr; } }

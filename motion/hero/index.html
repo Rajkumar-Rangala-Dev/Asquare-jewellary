@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>Asquare Jewellery — hero film (landscape)</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <link rel="stylesheet" href="film.css" />
+    <style>
+      #root {
+        position: relative;
+        overflow: hidden;
+        background: radial-gradient(ellipse 80% 75% at 50% 45%, #075640 0%, var(--emerald) 45%, var(--emerald-deep) 100%);
+      }
+      html, body, #root { --W: 1920px; --H: 1080px; width: 1920px; height: 1080px; }
+      /* Final full-bleed state: emerald falls off to the left, where the site's caption sits. */
+      :root { --vignette: linear-gradient(90deg, rgba(3, 57, 43, 0.85) 0%, rgba(3, 57, 43, 0.35) 38%, rgba(3, 57, 43, 0) 60%); }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="6" data-width="1920" data-height="1080" data-fps="24">
+      <svg class="layer" viewBox="0 0 1920 1080"><g id="echoGroup"></g></svg>
+      <div id="window">
+        <div id="reveal">
+          <img id="photo" src="assets/necklace.webp" alt="" />
+          <div id="sweep"></div>
+          <div id="glints" class="layer"></div>
+        </div>
+      </div>
+      <div id="vignette" class="layer"></div>
+      <svg class="layer" viewBox="0 0 1920 1080"><g id="frameGroup"></g><g id="keystoneMove"><g id="keystone"></g></g></svg>
+      <div id="dust" class="layer"></div>
+    </div>
+    <script>
+      window.LAYOUT = {
+        W: 1920,
+        H: 1080,
+        photo: { width: 2800, keys: [{ x: 120, y: -420 }, { x: 560, y: -420 }, { x: -80, y: -150, s: 0.786 }] },
+        a0: { x: 700, w: 520, top: 170 },   // centred while it is drawn
+        a1: { x: 1080, w: 620, top: 120 },  // resting position: right side, headline on the left
+        a2: { x: -1500, w: 4920, top: -900 }, // far outside the frame: the arch has "opened"
+        sweep: [420, 1360, 860, 1820],
+        glints: [
+          { x: 905, y: 330, t: 1.5, s: 0.85 },
+          { x: 1010, y: 560, t: 1.85, s: 0.65 },
+          { x: 800, y: 780, t: 2.2, s: 1.0 },
+          { x: 1250, y: 420, t: 3.4, s: 0.8 },
+          { x: 1480, y: 700, t: 3.75, s: 0.95 },
+          { x: 1180, y: 880, t: 4.6, s: 0.7 },
+          { x: 420, y: 560, t: 5.2, s: 0.9 },
+        ],
+        dust: 54,
+      };
+    </script>
+    <script src="film.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = window.buildHeroFilm();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1080" />
+    <title>Asquare Jewellery — craft film (sketch → facet → setting → polish)</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      /* 5s @ 24fps = 120 frames, scrubbed by scroll in the "Craft" section.
+         Background matches the site's ivory so the frames sit seamlessly on the page. */
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1080px; overflow: hidden; background: #faf7f0; }
+      #root { position: relative; width: 1080px; height: 1080px; background: #faf7f0; }
+      svg { position: absolute; inset: 0; width: 1080px; height: 1080px; }
+      #halo { opacity: 0; }
+      .edge { stroke: #8c8478; fill: none; stroke-linecap: round; }
+      .claw { fill: none; stroke-linecap: round; }
+      .band { fill: none; stroke-linecap: round; }
+      .glint path { fill: #fffaf0; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="5" data-width="1080" data-height="1080" data-fps="24">
+      <svg viewBox="0 0 1080 1080">
+        <defs>
+          <radialGradient id="haloGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#ead9ae" stop-opacity="0.5" />
+            <stop offset="60%" stop-color="#e9d6a6" stop-opacity="0.12" />
+            <stop offset="100%" stop-color="#e9d6a6" stop-opacity="0" />
+          </radialGradient>
+          <linearGradient id="bandGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#9c7837" />
+            <stop offset="45%" stop-color="#e2c27e" />
+            <stop offset="55%" stop-color="#f3e2b4" />
+            <stop offset="100%" stop-color="#9c7837" />
+          </linearGradient>
+        </defs>
+        <circle id="halo" cx="540" cy="220" r="380" fill="url(#haloGrad)" />
+        <g id="bandBack"></g>
+        <g id="faces"></g>
+        <g id="edges"></g>
+        <g id="prongs"></g>
+        <g id="bandFront"></g>
+        <g id="glints"></g>
+      </svg>
+    </div>
+    <script>
+      // ---------- Round-brilliant geometry (unit radius at the girdle) ----------
+      const TAU = Math.PI * 2, d2r = Math.PI / 180;
+      const ring = (n, r, y, off) => Array.from({ length: n }, (_, i) => {
+        const a = (i / n) * TAU + off;
+        return [r * Math.cos(a), y, r * Math.sin(a)];
+      });
+      const T = ring(8, 0.56, -0.36, 0);            // table
+      const C = ring(8, 0.8, -0.2, TAU / 16);       // crown break (star tips)
+      const G = ring(16, 1.0, 0, 0);                // girdle
+      const P = ring(8, 0.5, 0.42, TAU / 16);       // pavilion break
+      const CULET = [0, 0.86, 0];
+      const m = (k, n) => ((k % n) + n) % n;
+
+      const faces = [];
+      faces.push(T.slice());
+      for (let i = 0; i < 8; i++) {
+        faces.push([T[i], T[m(i + 1, 8)], C[i]]);                           // star
+        faces.push([T[i], C[i], G[2 * i], C[m(i - 1, 8)]]);                 // bezel (kite)
+        faces.push([C[i], G[2 * i + 1], G[2 * i]]);                         // upper girdle
+        faces.push([C[i], G[m(2 * i + 2, 16)], G[2 * i + 1]]);
+        faces.push([G[2 * i], G[2 * i + 1], P[i]]);                         // lower girdle
+        faces.push([G[2 * i + 1], G[m(2 * i + 2, 16)], P[i]]);
+        faces.push([G[m(2 * i + 2, 16)], P[m(i + 1, 8)], P[i]]);
+        faces.push([P[i], P[m(i + 1, 8)], CULET]);                          // pavilion main
+      }
+      // Unique edges from faces (keyed by vertex identity).
+      const ids = new Map();
+      [...T, ...C, ...G, ...P, CULET].forEach((v, i) => ids.set(v, i));
+      const edgeSet = new Map();
+      faces.forEach((f) => f.forEach((v, i) => {
+        const w = f[(i + 1) % f.length];
+        const a = ids.get(v), b = ids.get(w);
+        const k = a < b ? a + "-" + b : b + "-" + a;
+        if (!edgeSet.has(k)) edgeSet.set(k, [v, w]);
+      }));
+      // Draw order for the "sketch": table first, then outward, then down to the culet.
+      const edges = [...edgeSet.values()].sort((e1, e2) => (e1[0][1] + e1[1][1]) - (e2[0][1] + e2[1][1]));
+
+      // Ring shank: two concentric circles in the X–Y plane under the stone.
+      const shank = (r, cy) => Array.from({ length: 73 }, (_, i) => {
+        const a = (i / 72) * TAU;
+        return [r * Math.sin(a), cy - r * Math.cos(a) * -1, 0];
+      });
+      const SH_C = 2.05, SH_R = 1.55;
+      const shankOuter = shank(SH_R + 0.14, SH_C), shankInner = shank(SH_R - 0.06, SH_C);
+      // Four claws: from the shank shoulder, hugging the girdle, tipping over the crown.
+      const claws = [45, 135, 225, 315].map((deg) => {
+        const a = deg * d2r, c = Math.cos(a), s = Math.sin(a);
+        return [[0.55 * c, 0.62, 0.55 * s], [1.07 * c, 0.02, 1.07 * s], [0.76 * c, -0.21, 0.76 * s]];
+      });
+
+      // ---------- Projection ----------
+      const CX = 540, LIGHT = (() => { const l = [-0.45, -0.75, -0.5], n = Math.hypot(...l); return l.map((x) => x / n); })();
+      const VIEW = [0, 0, -1];
+      function xf(v, yaw, tilt) {
+        let [x, y, z] = v;
+        const cy = Math.cos(yaw), sy = Math.sin(yaw);
+        [x, z] = [x * cy - z * sy, x * sy + z * cy];
+        const ct = Math.cos(tilt), st = Math.sin(tilt);
+        [y, z] = [y * ct - z * st, y * st + z * ct];
+        return [x, y, z];
+      }
+      const proj = (p) => { const k = 1 / (1 + p[2] * 0.08); return [CX + p[0] * st.S * k, st.CY + p[1] * st.S * k]; };
+      const sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
+      const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+      const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+      const norm = (a) => { const n = Math.hypot(...a) || 1; return a.map((x) => x / n); };
+      const mix = (a, b, t) => a.map((x, i) => Math.round(x + (b[i] - x) * t));
+      // Diamond palette: near-white with cool greys, so only the metal reads as gold.
+      const ICE = [246, 247, 247], STEEL = [196, 202, 208], SHADOW = [128, 134, 142], WHITE = [255, 255, 255];
+
+      // ---------- SVG pools ----------
+      const NS = "http://www.w3.org/2000/svg";
+      const pool = (parentId, n, tag, cls) => Array.from({ length: n }, () => {
+        const el = document.createElementNS(NS, tag);
+        if (cls) el.setAttribute("class", cls);
+        document.getElementById(parentId).appendChild(el);
+        return el;
+      });
+      const faceEls = pool("faces", faces.length, "polygon");
+      const edgeEls = pool("edges", edges.length, "line", "edge");
+      const clawEls = pool("prongs", 4, "path", "claw");
+      const clawTips = pool("prongs", 4, "circle");
+      const bandEls = { back: pool("bandBack", 2, "path", "band"), front: pool("bandFront", 2, "path", "band") };
+
+      // ---------- Scene state (tweened by the timeline) ----------
+      const st = { sketch: 0, yaw: -0.35, tilt: 0.5, fill: 0, claws: 0, band: 0, polish: 0, S: 300, CY: 500 };
+
+      function render() {
+        const yaw = st.yaw, tilt = st.tilt;
+        // Facets: depth-sorted, lit by a key light; a narrow specular lobe makes facets "fire".
+        const lit = faces.map((f, i) => {
+          const p = f.map((v) => xf(v, yaw, tilt));
+          const n = norm(cross(sub(p[1], p[0]), sub(p[2], p[0])));
+          const depth = p.reduce((s, q) => s + q[2], 0) / p.length;
+          return { i, p, n, depth };
+        }).sort((a, b) => b.depth - a.depth);
+        lit.forEach(({ i, p, n }) => {
+          const el = faceEls[i];
+          const facing = -dot(n, VIEW);
+          const diff = Math.max(0, -dot(n, LIGHT));
+          const refl = sub(LIGHT, n.map((x) => 2 * dot(LIGHT, n) * x));
+          const spec = Math.pow(Math.max(0, -dot(norm(refl), VIEW)), 18);
+          let col = mix(ICE, STEEL, 0.15 + 0.75 * (1 - diff));
+          col = mix(col, SHADOW, Math.max(0, 0.45 - facing) * 0.9);
+          // A faint warm return from the gold setting once it exists.
+          col = mix(col, [226, 205, 160], 0.12 * st.claws * (1 - diff));
+          col = mix(col, WHITE, Math.min(1, spec * (1.2 + st.polish * 1.5)));
+          el.setAttribute("points", p.map(proj).map((q) => q[0].toFixed(1) + "," + q[1].toFixed(1)).join(" "));
+          el.setAttribute("fill", `rgb(${col.join(",")})`);
+          el.setAttribute("fill-opacity", (st.fill * (facing > 0 ? 0.92 : 0.18)).toFixed(3));
+        });
+
+        // Edges: progressively "sketched", back edges fainter.
+        const nE = edges.length;
+        edges.forEach((e, k) => {
+          const el = edgeEls[k];
+          const a = xf(e[0], yaw, tilt), b = xf(e[1], yaw, tilt);
+          const local = Math.min(1, Math.max(0, st.sketch * 1.6 - (k / nE) * 0.6) / 1);
+          const pa = proj(a), pb = proj(b);
+          const pe = [pa[0] + (pb[0] - pa[0]) * local, pa[1] + (pb[1] - pa[1]) * local];
+          el.setAttribute("x1", pa[0].toFixed(1)); el.setAttribute("y1", pa[1].toFixed(1));
+          el.setAttribute("x2", pe[0].toFixed(1)); el.setAttribute("y2", pe[1].toFixed(1));
+          const back = (a[2] + b[2]) / 2 > 0.15;
+          el.setAttribute("stroke-width", back ? 0.8 : 1.5);
+          el.setAttribute("stroke-opacity", local <= 0 ? 0 : (back ? 0.3 : 0.95) * (1 - st.fill * (back ? 0.85 : 0.45)));
+        });
+
+        // Claws grow from the shoulder up over the girdle.
+        claws.forEach((cl, k) => {
+          const p = cl.map((v) => xf(v, yaw, tilt));
+          const q = p.map(proj);
+          const g = st.claws;
+          const tip = g < 0.5 ? [q[0][0] + (q[1][0] - q[0][0]) * g * 2, q[0][1] + (q[1][1] - q[0][1]) * g * 2]
+                              : [q[1][0] + (q[2][0] - q[1][0]) * (g - 0.5) * 2, q[1][1] + (q[2][1] - q[1][1]) * (g - 0.5) * 2];
+          const d = g < 0.5 ? `M${q[0][0]},${q[0][1]} L${tip[0]},${tip[1]}` : `M${q[0][0]},${q[0][1]} Q${q[1][0]},${q[1][1]} ${tip[0]},${tip[1]}`;
+          const front = p[1][2] < 0;
+          clawEls[k].setAttribute("d", d);
+          clawEls[k].setAttribute("stroke", "url(#bandGrad)");
+          clawEls[k].setAttribute("stroke-width", (front ? 0.046 : 0.03) * st.S);
+          clawEls[k].setAttribute("stroke-opacity", g > 0 ? (front ? 1 : 0.35) : 0);
+          clawEls[k].parentNode.appendChild(clawEls[k]);
+          clawTips[k].setAttribute("cx", tip[0]); clawTips[k].setAttribute("cy", tip[1]);
+          clawTips[k].setAttribute("r", g > 0.92 ? 0.026 * st.S : 0);
+          clawTips[k].setAttribute("fill", front ? "#d9b56c" : "rgba(201,164,92,.35)");
+        });
+
+        // Shank: split into front/back halves so it passes behind the stone correctly.
+        [shankOuter, shankInner].forEach((pts, idx) => {
+          const tp = pts.map((v) => xf(v, yaw, tilt));
+          const n = Math.floor((pts.length - 1) * st.band);
+          let back = "", front = "";
+          for (let i = 0; i < n; i++) {
+            const a = proj(tp[i]), b = proj(tp[i + 1]);
+            const seg = `M${a[0].toFixed(1)},${a[1].toFixed(1)} L${b[0].toFixed(1)},${b[1].toFixed(1)}`;
+            if ((tp[i][2] + tp[i + 1][2]) / 2 < 0) front += seg; else back += seg;
+          }
+          const w = (idx === 0 ? 0.075 : 0.03) * st.S;
+          bandEls.back[idx].setAttribute("d", back);
+          bandEls.front[idx].setAttribute("d", front);
+          [bandEls.back[idx], bandEls.front[idx]].forEach((el, j) => {
+            el.setAttribute("stroke", "url(#bandGrad)");
+            el.setAttribute("stroke-width", j === 0 ? w * 0.85 : w);
+            el.setAttribute("stroke-opacity", j === 0 ? 0.55 : 1);
+          });
+        });
+      }
+
+      // ---------- Glints for the polish ----------
+      const STAR = "M0,-1 C.07,-.07 .07,-.07 1,0 C.07,.07 .07,.07 0,1 C-.07,.07 -.07,.07 -1,0 C-.07,-.07 -.07,-.07 0,-1Z";
+      const glintSpots = [
+        { x: 500, y: 165, s: 64, t: 4.0 },
+        { x: 615, y: 205, s: 40, t: 4.25 },
+        { x: 548, y: 250, s: 84, t: 4.45 },
+      ];
+      const gl = document.getElementById("glints");
+      const glintEls = glintSpots.map((g) => {
+        const el = document.createElementNS(NS, "g");
+        el.setAttribute("class", "glint");
+        el.innerHTML = `<path d="${STAR}" />`;
+        gl.appendChild(el);
+        return el;
+      });
+
+      // ---------- Timeline ----------
+      const tl = gsap.timeline({ paused: true, onUpdate: render });
+      // 1 Sketch (0–1.2s)
+      tl.to(st, { sketch: 1, duration: 1.2, ease: "power1.inOut" }, 0);
+      // continuous turn of the stone through the film
+      tl.to(st, { yaw: -0.35 + TAU * 0.5, duration: 5, ease: "sine.inOut" }, 0);
+      // 2 Facet (1.0–2.4s): light fills each face
+      tl.to(st, { fill: 1, duration: 1.2, ease: "power2.out" }, 1.0);
+      // 3 Setting (2.4–3.8s): shank draws, claws close over the girdle
+      tl.to(st, { band: 1, duration: 1.1, ease: "power2.inOut" }, 2.4);
+      tl.to(st, { claws: 1, duration: 0.8, ease: "power3.out" }, 2.9);
+      // camera pulls back so the whole ring fits the frame
+      tl.to(st, { S: 205, CY: 200, tilt: 0.38, duration: 1.4, ease: "power2.inOut" }, 2.3);
+      // 4 Polish (3.8–5s): specular blooms, halo, glints
+      tl.to(st, { polish: 1, duration: 1, ease: "sine.inOut" }, 3.8);
+      tl.to("#halo", { opacity: 1, duration: 1, ease: "sine.out" }, 3.8);
+      glintSpots.forEach((g, i) => {
+        tl.fromTo(glintEls[i], { attr: { transform: `translate(${g.x},${g.y}) scale(0) rotate(-20)` } },
+          { attr: { transform: `translate(${g.x},${g.y}) scale(${g.s}) rotate(15)` }, duration: 0.3, ease: "power2.out" }, g.t);
+        tl.to(glintEls[i], { attr: { transform: `translate(${g.x},${g.y}) scale(0) rotate(45)` }, duration: 0.4, ease: "power2.in" }, g.t + 0.3);
+      });
+
+      render();
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>
